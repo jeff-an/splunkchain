@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: DEPLOY_NAME
+  labels:
+    app: splunkchain
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: splunkchain
+  template:
+    metadata:
+      labels:
+        app: splunkchain
+    spec:
+      containers:
+      - name: splunk
+        image: splunk:latest
+        ports:
+        - containerPort: 8000
+      - name: splunkchain
+        image: splunkchain:latest
+        ports:
+        - containerPort: 80
