@@ -61,7 +61,7 @@ class Network():
                 "address": self.node_ip
             }
             print("Registering {} at {}".format(self.node_ip, peer))
-            response = requests.post('http://{}/nodes/register'.format(peer), json=json.dumps(payload))
+            response = requests.post('http://{}/nodes/register'.format(peer), json=payload)
             print(response)
         if len(self.peers):
             self.sync()
@@ -76,7 +76,7 @@ class Network():
         max_length = len(self.blockchain.chain)
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
-            response = requests.get("http://{}/chain".format(node))
+            response = requests.get("http://{}/data".format(node))
             if response.status_code == 200:
                 length = response.json()['chain']['length']
                 chain = response.json()['chain']['data']

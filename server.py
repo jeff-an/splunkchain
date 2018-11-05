@@ -33,10 +33,13 @@ def register_nodes():
     return jsonify(response), 201
 
 
-@app.route('/chain', methods=['GET'])
-def full_chain():
+@app.route('/data', methods=['GET'])
+def sync_data():
     response = {
-        'chain': blockchain.chain,
-        'length': len(blockchain.chain),
+        'chain': {
+            "data": blockchain.chain,
+            "length": len(blockchain.chain)
+        },
+        'events': sclient.get_events(),
     }
     return jsonify(response), 200
