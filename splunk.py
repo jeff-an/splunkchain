@@ -7,10 +7,11 @@ from subprocess import DEVNULL, PIPE
 
 class SplunkClient():
 	DATA_DIR = '/tmp/data'
-	DATA_FILE = 'events.log'
-	DATA_FILE_PATH = '{}/{}'.format(DATA_DIR, DATA_FILE)
+	DATA_FILE_NAME = 'events.log'
+	DATA_FILE_PATH = '{}/{}'.format(DATA_DIR, DATA_FILE_NAME)
 	SPLUNK_HOME = '/opt/splunk'
 	SPLUNK_BINARY = SPLUNK_HOME + "/bin/splunk"
+	INDEX_NAME = 'main'
 
 	def __init__(self):
 		self._file = self._create_data_file()
@@ -20,13 +21,15 @@ class SplunkClient():
 			time.sleep(40)
 		self._add_splunk_file_monitor()
 		print("Succesfully initialized Splunk and file monitor")
-		#self.test()
+		self._gen_test_events()
 
-	def test(self):
+	def _gen_test_events(self):
 		a = {"host": "jan", "event": {"key": "hello"}, "time": 1541373097.5642061}
 		b = {"host": "jan", "event": {"key": "world"}, "time": 23402349}
 		self._file.write(json.dumps(a))
+		self._file.write("\n")
 		self._file.write(json.dumps(b))
+		self._file.flush()
 
 	def __del__(self):
 		if hasattr(self, "_file"):
@@ -44,15 +47,18 @@ class SplunkClient():
 				print("Attempt {} to add file monitor".format(attempt))
 				process = subprocess.Popen(["/bin/bash",
 											"-c",
-											"{} login -auth admin:Chang3d! && {} add monitor {}"
+											"{} login -auth admin:Chang3d! && {} add monitor {} -index {}"
 												.format(SplunkClient.SPLUNK_BINARY,
 														SplunkClient.SPLUNK_BINARY,
-														SplunkClient.DATA_FILE_PATH)],
+														SplunkClient.DATA_FILE_PATH,
+														SplunkClient.INDEX_NAME)],
 											stdin=PIPE,
 											stdout=PIPE,
 											stderr=PIPE,
 											universal_newlines=True)
-				print(process.communicate())
+				error = process.communicate()[1]
+				if isinstance(error, str) and "another" not in error:
+					raise Exception(error)
 				break
 			except Exception as e:
 				print("Encountered exception while adding file monitor: {}".format(e))
