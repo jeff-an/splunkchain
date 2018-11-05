@@ -16,4 +16,3 @@ RUN sudo pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 ENTRYPOINT [ "python3", "." ]
-# ENTRYPOINT [ "/sbin/entrypoint.sh", "start-service", ">", "splunk.log", "2>&1", "&", "python3", ".", "&&", "fg" ]

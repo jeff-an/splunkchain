@@ -2,15 +2,17 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: splunkchain-deployment-DEPLOY_ID
+  name: splunkchain-pod-DEPLOY_ID
   labels:
     app: splunkchain
-    deploy_id: DEPLOY_ID
+    deploy_id: "DEPLOY_ID"
 spec:
   containers:
     - name: splunkchain
       image: repo.splunk.com/jan/splunkchain:latest
       env:
+        - name: PYTHONUNBUFFERED
+          value: "0"
         - name: SPLUNK_START_ARGS
           value: --accept-license
         - name: SPLUNK_PASSWORD
@@ -29,7 +31,7 @@ spec:
   type: NodePort
   selector:
     app: splunkchain
-    deploy_id: DEPLOY_ID
+    deploy_id: "DEPLOY_ID"
   ports:
   - protocol: TCP
     name: service-port

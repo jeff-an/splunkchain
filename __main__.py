@@ -1,14 +1,11 @@
-import subprocess
 from aiohttp import web
+from splunk import SplunkClient
 
+sclient = SplunkClient()
 routes = web.RouteTableDef()
-
-def run_splunk():
-	subprocess.Popen(["/sbin/entrypoint.sh", "start-service"])
 
 @routes.get('/')
 async def handle_healthcheck(request):
-	run_splunk()
 	return web.Response(text="Hello World!")	
 
 app = web.Application()

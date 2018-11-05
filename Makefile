@@ -3,7 +3,7 @@ BASE_IMAGE = splunk/splunk
 IMAGE_NAME = splunkchain:latest
 REMOTE_IMAGE_NAME = repo.splunk.com/jan/splunkchain:latest
 CONTAINER_NAME=$(shell echo $${name:-SPLUNKCHAIN_$$RANDOM})
-DEPLOY_ID:=$(shell echo $${name:-splunkchain-$$RANDOM})
+DEPLOY_ID:=$(shell echo $${name:-$$RANDOM})
 
 image:
 	docker build -f "Dockerfile" -t $(IMAGE_NAME) .
@@ -30,11 +30,13 @@ krestart:
 	kubectl create -f . --save-config
 
 kstop:
-	kubectl delete -f client-*
+	-echo client-* | xargs -n1 kubectl delete -f
 	rm client-*.yml
 
 refresh:
 	kubectl apply -f client-*
+
+krebuild: image kstop client
 
 clean:
 	rm client-*.yml
