@@ -46,6 +46,9 @@ class Blockchain:
                 recipient = transaction['recipient']
                 sender = transaction['sender']
                 amount = int(transaction['amount'])
+                if sender == "0":
+                    # From the system
+                    continue
                 balances[sender] -= amount
                 if balances[sender] < 0:
                     print("Detected overspend by {} in transaction {}".format(sender, transaction))
