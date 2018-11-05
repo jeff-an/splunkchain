@@ -21,7 +21,6 @@ class SplunkClient():
 			time.sleep(40)
 		self._add_splunk_file_monitor()
 		print("Succesfully initialized Splunk and file monitor")
-		self._gen_test_events()
 
 	def _gen_test_events(self):
 		a = {"host": "jan", "event": {"key": "hello"}, "time": 1541373097.5642061}
@@ -67,4 +66,24 @@ class SplunkClient():
 					sys.exit(1)
 				time.sleep(1.5)
 			
-
+	def add_event(self, event):
+		payload = {
+			"time": time.time(),
+			"sourcetype": "splunkchain",
+			"event": event
+		}
+		self._file.write(json.dumps(payload))
+		self._file.write('\n')
+		self._file.flush()
+	
+	def get_events(self):
+		self._file.seek(0)
+		return self._file.readlines()
+	
+	def replace_events(self, events):
+		self._file.close()
+		os.remove(SplunkClient.DATA_FILE_PATH)
+		self._file = open(SplunkClient.DATA_FILE_PATH, "a+")
+		for event in events:
+			self._file.write(event)
+		self._file.flush()

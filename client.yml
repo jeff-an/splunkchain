@@ -11,6 +11,8 @@ spec:
     - name: splunkchain
       image: repo.splunk.com/jan/splunkchain:latest
       env:
+        - name: NODE_NAME
+          value: "DEPLOY_ID"
         - name: PYTHONUNBUFFERED
           value: "0"
         - name: SPLUNK_START_ARGS
@@ -21,7 +23,7 @@ spec:
         - name: splunk-port
           containerPort: 8000
         - name: server-port
-          containerPort: 80
+          containerPort: 8080
 ---
 kind: Service
 apiVersion: v1
